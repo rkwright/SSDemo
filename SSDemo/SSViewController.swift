@@ -21,9 +21,8 @@ class SSViewController: UIViewController {
         setupScene()
         setupCamera()
         
-        // addBox()
         var planet : SCNNode
-        planet = createPlanet(radius: 0.2, image: "")
+        planet = createPlanet(radius: 0.8, image: "sun")
         scnScene.rootNode.addChildNode(planet)
     }
 
@@ -47,7 +46,7 @@ class SSViewController: UIViewController {
     }
 
     //
-    // Just set up our scene and add the background png to it
+    // Just set up our scene
     //
     func setupScene() {
         scnScene = SCNScene()
@@ -81,23 +80,26 @@ class SSViewController: UIViewController {
         scene.rootNode.addChildNode(boxNode)
         scnView.scene = scene
     }
+    
+    //
+    // Create the planet, given its size and an image to use
+    //
+    func createPlanet(radius: Float, image: String) -> SCNNode{
+          let planet = SCNSphere(radius: CGFloat(radius))
+          let material = SCNMaterial()
+          material.diffuse.contents = UIImage(named: "\(image).jpg")
+          planet.materials = [material]
+          //material.diffuse.contents = UIColor.yellow
+          //planet.materials = [material]
+
+          let planetNode = SCNNode(geometry: planet)
+         
+         return planetNode
+     }
+    
 }   // end of class
 
-/**
-  * Create the planet, given its size and an image to use
-  */
-  func createPlanet(radius: Float, image: String) -> SCNNode{
-        let planet = SCNSphere(radius: CGFloat(radius))
-        let material = SCNMaterial()
-        //material.diffuse.contents = UIImage(named: "\(image).jpg")
-        //planet.materials = [material]
-        material.diffuse.contents = UIColor.yellow
-        planet.materials = [material]
 
-        let planetNode = SCNNode(geometry: planet)
-       
-       return planetNode
-   }
 
 //
 // Extension protocol so we can handle the render loop calls
