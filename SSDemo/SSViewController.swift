@@ -21,9 +21,24 @@ class SSViewController: UIViewController {
         setupScene()
         setupCamera()
         
-        var planet : SCNNode
-        planet = createPlanet(radius: 0.8, image: "sun")
-        scnScene.rootNode.addChildNode(planet)
+        // add in the Sun
+        let sun = createPlanet(radius: 0.8, image: "sun")
+        sun.name = "sun"
+        sun.position = SCNVector3(x:0, y:6, z:0)
+        rotateObject(rotation: -0.3, planet: sun, duration: 1)
+        scnScene.rootNode.addChildNode(sun)
+
+        // then Mercury
+        let mercuryOrbit = createOrbit(orbitSize: 1.9)
+        let mercury = createPlanet(radius: 0.3, image: "mercury")
+        mercury.name = "mercury"
+        mercury.position = SCNVector3(x: 1.9 ,y: 0.6, z: 0)
+        rotateObject(rotation: 0.6, planet: mercury, duration: 0.4)
+        rotateObject(rotation: 0.6, planet: mercuryOrbit, duration: 1)
+
+        mercuryOrbit.addChildNode(mercury)
+        scnScene.rootNode.addChildNode(mercuryOrbit)
+
     }
 
     //
@@ -60,7 +75,7 @@ class SSViewController: UIViewController {
         cameraNode = SCNNode()
         
         cameraNode.camera = SCNCamera()
-        cameraNode.position = SCNVector3(x: 0, y: 5, z: 10)
+        cameraNode.position = SCNVector3(x: 0, y: 5, z: 20)
         
         scnScene.rootNode.addChildNode(cameraNode)
     }
@@ -89,14 +104,37 @@ class SSViewController: UIViewController {
           let material = SCNMaterial()
           material.diffuse.contents = UIImage(named: "\(image).jpg")
           planet.materials = [material]
-          //material.diffuse.contents = UIColor.yellow
-          //planet.materials = [material]
 
           let planetNode = SCNNode(geometry: planet)
          
          return planetNode
      }
     
+    //
+    //
+    //
+    func rotateObject(rotation: Float, planet: SCNNode, duration: Float){
+        let rotation = SCNAction.rotateBy(x:0,y:CGFloat(rotation),z:0, duration: TimeInterval(duration))
+        planet.runAction(SCNAction.repeatForever(rotation))
+    }
+        
+    //
+    // Create the specified torus which serves as the "orbit", which
+    // in fact owns the planet...  :-)
+    //
+    func createOrbit(orbitSize: Float) -> SCNNode {
+            
+        let orbit = SCNTorus(ringRadius: CGFloat(orbitSize), pipeRadius: 0.002)
+        let material = SCNMaterial()
+        material.diffuse.contents = UIColor.darkGray
+            
+        orbit.materials = [material]
+            
+        let orbitNode = SCNNode(geometry: orbit)
+            
+        return orbitNode
+    }
+     
 }   // end of class
 
 
