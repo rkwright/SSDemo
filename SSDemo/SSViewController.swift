@@ -8,15 +8,24 @@
 import UIKit
 import SceneKit
 
+struct PlanetParms {
+    let orbitSize : Float
+    let diameter  : Float
+    let name      : String
+}
+
 class SSViewController: UIViewController {
     var scnView     : SCNView!
     var scnScene    : SCNScene!
     var cameraNode  : SCNNode!
+    var planets     = [PlanetParms]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
+        setupPlanets()
+        
         setupView()
         setupScene()
         setupCamera()
@@ -25,6 +34,7 @@ class SSViewController: UIViewController {
     }
 
     //-------------- Environment Setup ----------------------------
+    
     //
     // Set up the view configuration
     //
@@ -53,7 +63,7 @@ class SSViewController: UIViewController {
         cameraNode = SCNNode()
         
         cameraNode.camera = SCNCamera()
-        cameraNode.position = SCNVector3(x: 0, y: 5, z: 20)
+        cameraNode.position = SCNVector3(x: 0, y: 10, z: 50)
         
         scnScene.rootNode.addChildNode(cameraNode)
     }
@@ -63,7 +73,7 @@ class SSViewController: UIViewController {
     //
     // Create the planet, given its size and an image to use
     //
-    func createPlanet(orbitSize: Float, radius: Float, image: String, xPos: Float) -> SCNNode{
+    func createPlanet(orbitSize: Float, radius: Float, image: String) -> SCNNode{
         let planetGeom = SCNSphere(radius: CGFloat(radius))
         
         let material = SCNMaterial()
@@ -75,7 +85,7 @@ class SSViewController: UIViewController {
         planet.name = image
         planet.position = SCNVector3(x: orbitSize, y: 0, z: 0)
          
-         return planet
+        return planet
      }
     
     //
@@ -84,7 +94,7 @@ class SSViewController: UIViewController {
     //
     func createOrbit ( orbitSize: Float ) -> SCNNode {
             
-        let orbit = SCNTorus(ringRadius: CGFloat(orbitSize), pipeRadius: 0.008)
+        let orbit = SCNTorus(ringRadius: CGFloat(orbitSize), pipeRadius: 0.015)
         let material = SCNMaterial()
         material.diffuse.contents = UIColor.darkGray
             
@@ -96,7 +106,7 @@ class SSViewController: UIViewController {
     }
 
     //
-    //
+    // Set up an Action for the supplied object
     //
     func rotateObject ( obj: SCNNode, rotation: Float, duration: Float ) {
         
@@ -109,20 +119,46 @@ class SSViewController: UIViewController {
     //
     //
     //
+    func setupPlanets () {
+       
+        planets.append(PlanetParms(orbitSize: 0.0, diameter: 0.8, name: "Sun"))
+        planets.append(PlanetParms(orbitSize: 0.6, diameter: 0.3, name: "Mercury"))
+        planets.append(PlanetParms(orbitSize: 0.0, diameter: 0.5, name: "Venus"))
+    }
+    
+    //
+    // Walk through the table (TODO) and instantiate the celestial objects
+    //
     func createSolarSystem () {
+        
         // add in the Sun
-        let sun = createPlanet(orbitSize: 0.0, radius: 0.8, image: "sun", xPos:0.0)
+        let sun = createPlanet(orbitSize: 0.0, radius: 0.8, image: "sun")
         rotateObject(obj: sun, rotation: -0.3, duration: 1)
         scnScene.rootNode.addChildNode(sun)
 
         // then Mercury
         let mercuryOrbit = createOrbit(orbitSize: 1.9)
-        let mercury = createPlanet(orbitSize:1.9, radius: 0.3, image: "mercury", xPos:1.9)
+        let mercury = createPlanet(orbitSize:1.9, radius: 0.3, image: "mercury")
         rotateObject(obj: mercury, rotation: 0.6, duration: 0.4)
         rotateObject(obj: mercuryOrbit, rotation: 0.6,  duration: 1)
-
         mercuryOrbit.addChildNode(mercury)
         scnScene.rootNode.addChildNode(mercuryOrbit)
+        
+        // then Venus
+        let venusOrbit = createOrbit(orbitSize: 3.5)
+        let venus = createPlanet(orbitSize:3.5, radius: 0.3, image: "venus")
+        rotateObject(obj: venus, rotation: 0.6, duration: 0.4)
+        rotateObject(obj: venusOrbit, rotation: 0.6,  duration: 1)
+        venusOrbit.addChildNode(venus)
+        scnScene.rootNode.addChildNode(venusOrbit)
+        
+        // then Venus
+        let marsOrbit = createOrbit(orbitSize: 4.0)
+        let mars = createPlanet(orbitSize:4.0, radius: 0.3, image: "mars")
+        rotateObject(obj: mars, rotation: 0.6, duration: 0.4)
+        rotateObject(obj: marsOrbit, rotation: 0.6,  duration: 1)
+        marsOrbit.addChildNode(venus)
+        scnScene.rootNode.addChildNode(marsOrbit)
     }
     
 }   // end of class
