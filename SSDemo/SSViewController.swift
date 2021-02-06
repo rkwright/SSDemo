@@ -63,7 +63,7 @@ class SSViewController: UIViewController {
         cameraNode = SCNNode()
         
         cameraNode.camera = SCNCamera()
-        cameraNode.position = SCNVector3(x: 0, y: 10, z: 50)
+        cameraNode.position = SCNVector3(x: 0, y: 8, z: 24)
         
         scnScene.rootNode.addChildNode(cameraNode)
     }
@@ -157,7 +157,7 @@ class SSViewController: UIViewController {
         let mars = createPlanet(orbitSize:4.0, radius: 0.3, image: "mars")
         rotateObject(obj: mars, rotation: 0.6, duration: 0.4)
         rotateObject(obj: marsOrbit, rotation: 0.6,  duration: 1)
-        marsOrbit.addChildNode(venus)
+        marsOrbit.addChildNode(mars)
         scnScene.rootNode.addChildNode(marsOrbit)
     }
     
