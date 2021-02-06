@@ -21,26 +21,10 @@ class SSViewController: UIViewController {
         setupScene()
         setupCamera()
         
-        // add in the Sun
-        let sun = createPlanet(radius: 0.8, image: "sun")
-        sun.name = "sun"
-        sun.position = SCNVector3(x:0, y:6, z:0)
-        rotateObject(rotation: -0.3, planet: sun, duration: 1)
-        scnScene.rootNode.addChildNode(sun)
-
-        // then Mercury
-        let mercuryOrbit = createOrbit(orbitSize: 1.9)
-        let mercury = createPlanet(radius: 0.3, image: "mercury")
-        mercury.name = "mercury"
-        mercury.position = SCNVector3(x: 1.9 ,y: 0.6, z: 0)
-        rotateObject(rotation: 0.6, planet: mercury, duration: 0.4)
-        rotateObject(rotation: 0.6, planet: mercuryOrbit, duration: 1)
-
-        mercuryOrbit.addChildNode(mercury)
-        scnScene.rootNode.addChildNode(mercuryOrbit)
-
+        createSolarSystem()
     }
 
+    //-------------- Environment Setup ----------------------------
     //
     // Set up the view configuration
     //
@@ -80,20 +64,19 @@ class SSViewController: UIViewController {
         scnScene.rootNode.addChildNode(cameraNode)
     }
     
-    func addBox() {
-        let box = SCNBox(width: 0.00025, height: 0.00025, length: 0.00025, chamferRadius: 0)
-        
-        let boxNode = SCNNode()
-        boxNode.geometry = box
-        boxNode.position = SCNVector3(0, 0, 0)
-        
+    //--------------- Object Configs ---------------------
+    func addBox() -> SCNNode {
+        let box = SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0)
+      
         let material = SCNMaterial()
         material.diffuse.contents = UIColor.red
         box.materials = [material]
+
+        let boxNode = SCNNode( geometry: box)
         
-        let scene = SCNScene()
-        scene.rootNode.addChildNode(boxNode)
-        scnView.scene = scene
+        boxNode.position = SCNVector3(0, 0, 6)
+        
+        return boxNode
     }
     
     //
@@ -101,6 +84,7 @@ class SSViewController: UIViewController {
     //
     func createPlanet(radius: Float, image: String) -> SCNNode{
           let planet = SCNSphere(radius: CGFloat(radius))
+        
           let material = SCNMaterial()
           material.diffuse.contents = UIImage(named: "\(image).jpg")
           planet.materials = [material]
@@ -134,7 +118,36 @@ class SSViewController: UIViewController {
             
         return orbitNode
     }
-     
+
+    //---stem---------------------- App-specific ---------------------
+
+    //
+    //
+    //
+    func createSolarSystem () {
+        // add in the Sun
+        let sun = createPlanet(radius: 0.8, image: "sun")
+        sun.name = "sun"
+        sun.position = SCNVector3(x:0, y:6, z:0)
+        rotateObject(rotation: -0.3, planet: sun, duration: 1)
+        scnScene.rootNode.addChildNode(sun)
+
+        // then Mercury
+        let mercuryOrbit = createOrbit(orbitSize: 1.9)
+        let mercury = createPlanet(radius: 0.3, image: "mercury")
+        mercury.name = "mercury"
+        mercury.position = SCNVector3(x: 1.9 ,y: 0.6, z: 0)
+        rotateObject(rotation: 0.6, planet: mercury, duration: 0.4)
+        rotateObject(rotation: 0.6, planet: mercuryOrbit, duration: 1)
+
+        mercuryOrbit.addChildNode(mercury)
+        scnScene.rootNode.addChildNode(mercuryOrbit)
+        
+        let box = addBox()
+        scnScene.rootNode.addChildNode(box)
+
+    }
+    
 }   // end of class
 
 
