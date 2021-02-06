@@ -82,14 +82,16 @@ class SSViewController: UIViewController {
     //
     // Create the planet, given its size and an image to use
     //
-    func createPlanet(radius: Float, image: String) -> SCNNode{
-          let planet = SCNSphere(radius: CGFloat(radius))
+    func createPlanet(radius: Float, image: String, pos: SCNVector3) -> SCNNode{
+        let planet = SCNSphere(radius: CGFloat(radius))
         
-          let material = SCNMaterial()
-          material.diffuse.contents = UIImage(named: "\(image).jpg")
-          planet.materials = [material]
+        let material = SCNMaterial()
+        material.diffuse.contents = UIImage(named: "\(image).jpg")
+        planet.materials = [material]
 
-          let planetNode = SCNNode(geometry: planet)
+        let planetNode = SCNNode(geometry: planet)
+        planetNode.name = image
+        planetNode.position = pos
          
          return planetNode
      }
@@ -97,7 +99,8 @@ class SSViewController: UIViewController {
     //
     //
     //
-    func rotateObject(rotation: Float, planet: SCNNode, duration: Float){
+    func rotateObject ( planet: SCNNode, rotation: Float, duration: Float ) {
+        
         let rotation = SCNAction.rotateBy(x:0,y:CGFloat(rotation),z:0, duration: TimeInterval(duration))
         planet.runAction(SCNAction.repeatForever(rotation))
     }
@@ -106,7 +109,7 @@ class SSViewController: UIViewController {
     // Create the specified torus which serves as the "orbit", which
     // in fact owns the planet...  :-)
     //
-    func createOrbit(orbitSize: Float) -> SCNNode {
+    func createOrbit ( orbitSize: Float ) -> SCNNode {
             
         let orbit = SCNTorus(ringRadius: CGFloat(orbitSize), pipeRadius: 0.002)
         let material = SCNMaterial()
@@ -119,26 +122,26 @@ class SSViewController: UIViewController {
         return orbitNode
     }
 
-    //---stem---------------------- App-specific ---------------------
+    //------------------------- App-specific ---------------------
 
     //
     //
     //
     func createSolarSystem () {
         // add in the Sun
-        let sun = createPlanet(radius: 0.8, image: "sun")
-        sun.name = "sun"
-        sun.position = SCNVector3(x:0, y:6, z:0)
-        rotateObject(rotation: -0.3, planet: sun, duration: 1)
+        let sun = createPlanet(radius: 0.8, image: "sun", pos:SCNVector3(x:0, y:6, z:0))
+        //sun.name = "sun"
+        //sun.position = SCNVector3(x:0, y:6, z:0)
+        rotateObject(planet: sun, rotation: -0.3, duration: 1)
         scnScene.rootNode.addChildNode(sun)
 
         // then Mercury
         let mercuryOrbit = createOrbit(orbitSize: 1.9)
-        let mercury = createPlanet(radius: 0.3, image: "mercury")
-        mercury.name = "mercury"
-        mercury.position = SCNVector3(x: 1.9 ,y: 0.6, z: 0)
-        rotateObject(rotation: 0.6, planet: mercury, duration: 0.4)
-        rotateObject(rotation: 0.6, planet: mercuryOrbit, duration: 1)
+        let mercury = createPlanet(radius: 0.3, image: "mercury",pos:SCNVector3(x: 1.9 ,y: 0.6, z: 0))
+        //mercury.name = "mercury"
+        //mercury.position = SCNVector3(x: 1.9 ,y: 0.6, z: 0)
+        rotateObject(planet: mercury, rotation: 0.6, duration: 0.4)
+        rotateObject(planet: mercuryOrbit, rotation: 0.6,  duration: 1)
 
         mercuryOrbit.addChildNode(mercury)
         scnScene.rootNode.addChildNode(mercuryOrbit)
@@ -150,16 +153,13 @@ class SSViewController: UIViewController {
     
 }   // end of class
 
-
-
+//-------------- Extensions --------------
 //
 // Extension protocol so we can handle the render loop calls
 //
 extension SSViewController: SCNSceneRendererDelegate {
     
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        
-        
         
     }
 }
