@@ -28,9 +28,8 @@ class LineNode: SCNNode
 
         ndV2.position = v2
         parent.addChildNode(ndV2)
-
         let ndZAlign = SCNNode()
-        ndZAlign.eulerAngles.x = Float(M_PI_2)
+        ndZAlign.eulerAngles.x = Float.pi/2
 
         let cylgeo = SCNCylinder(radius: radius, height: CGFloat(height))
         cylgeo.radialSegmentCount = radSegmentCount
@@ -74,40 +73,37 @@ func makeSphere( scene: SCNScene, pos: SCNVector3, radius: Double, color: UIColo
     return shapeNode
 }
 
-func linesTest( scene: SCNScene )
-    {
-        let mat = SCNMaterial()
+func linesTest( scene: SCNScene ) {
+    let mat = SCNMaterial()
     mat.diffuse.contents  = UIColor.white
-        mat.specular.contents = UIColor.white
+    mat.specular.contents = UIColor.white
 
-        for _ in 1...10000    // draw 100 lines (as cylinders) between random points.
-        {
-            let v1 =  SCNVector3( x: Float.random(in: -50...50),
-                                  y: Float.random(in: -50...50),
-                                  z: Float.random(in: -50...50) )
+    // draw 100 lines (as cylinders) between random points.
+    for _ in 1...10000 {
+        let v1 =  SCNVector3( x: Float.random(in: -50...50),
+                            y: Float.random(in: -50...50),
+                            z: Float.random(in: -50...50) )
 
-            let v2 =  SCNVector3( x: Float.random(in: -50...50),
-                                  y: Float.random(in: -50...50),
-                                  z: Float.random(in: -50...50) )
+        let v2 =  SCNVector3( x: Float.random(in: -50...50),
+                            y: Float.random(in: -50...50),
+                            z: Float.random(in: -50...50) )
 
-            // Just for testing, add two little spheres to check if lines are drawn correctly:
-            // each line should run exactly from a green sphere to a red one:
+        // Just for testing, add two little spheres to check if lines are drawn correctly:
+        // each line should run exactly from a green sphere to a red one
+        scene.rootNode.addChildNode( makeSphere( scene: scene, pos:v1, radius: 0.5, color: UIColor.green))
+        scene.rootNode.addChildNode( makeSphere( scene:scene, pos:v2, radius: 0.5, color: UIColor.red))
 
-            scene.rootNode.addChildNode( makeSphere( scene: scene, pos:v1, radius: 0.5, color: UIColor.green))
-            scene.rootNode.addChildNode( makeSphere( scene:scene,pos:v2, radius: 0.5, color: UIColor.red))
+        // Have to pass the parentnode because
+        // it is not known during class instantiation of LineNode.
 
-            // Have to pass the parentnode because 
-            // it is not known during class instantiation of LineNode.
+        let ndLine = LineNode( parent: scene.rootNode,  // ** needed
+                             v1: v1,                // line (cylinder) starts here
+                             v2: v2,                // line ends here
+                             radius: 0.2,           // line thickness
+                             radSegmentCount: 6,    // hexagon tube
+                             material: [mat] )      // any material
 
-            let ndLine = LineNode(
-                         parent: scene.rootNode, // ** needed
-                             v1: v1,    // line (cylinder) starts here
-                             v2: v2,    // line ends here
-                         radius: 0.2,   // line thickness
-                radSegmentCount: 6,     // hexagon tube
-                       material: [mat] )  // any material
-
-            scene.rootNode.addChildNode(ndLine)
+        scene.rootNode.addChildNode(ndLine)
             
-        }
     }
+}
