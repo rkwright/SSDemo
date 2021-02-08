@@ -20,7 +20,7 @@ class LineNode: SCNNode
         super.init()
         
       //  let  height = v1.distance(v2)
-        let height = sqrt(v1.x*v2.x + v1.y*v2.y + v1.z*v2.z)
+        let height = sqrt( pow(v1.x-v2.x,2) + pow(v1.y-v2.y,2) + pow(v1.z-v2.z,2))
 
         position = v1
 
@@ -79,7 +79,7 @@ func linesTest( scene: SCNScene ) {
     mat.specular.contents = UIColor.white
 
     // draw 100 lines (as cylinders) between random points.
-    for _ in 1...10000 {
+    for _ in 1...100 {
         let v1 =  SCNVector3( x: Float.random(in: -50...50),
                             y: Float.random(in: -50...50),
                             z: Float.random(in: -50...50) )
