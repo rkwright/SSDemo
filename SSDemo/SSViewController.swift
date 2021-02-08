@@ -32,7 +32,8 @@ class SSViewController: UIViewController {
         
         createSolarSystem()
         
-        drawAxes(height: 10)
+        //drawAxes(height: 10)
+        linesTest(scene: scnScene)
     }
 
     //-------------- Environment Setup ----------------------------
