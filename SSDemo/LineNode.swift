@@ -10,16 +10,15 @@ import SceneKit
 
 class LineNode: SCNNode
 {
-    init( parent: SCNNode,     // because this node has not yet been assigned to a parent.
-              v1: SCNVector3,  // where line starts
-              v2: SCNVector3,  // where line ends
-          radius: CGFloat,     // line thicknes
-      radSegmentCount: Int,    // number of sides of the line
-        material: [SCNMaterial] )  // any material.
+    init( parent:          SCNNode,         // because this node has not yet been assigned to a parent.
+          v1:              SCNVector3,      // where line starts
+          v2:              SCNVector3,      // where line ends
+          radius:          CGFloat,         // line thicknes
+          radSegmentCount: Int,             // number of sides of the line
+          material:        [SCNMaterial] )  // any material.
     {
         super.init()
         
-      //  let  height = v1.distance(v2)
         let height = sqrt( pow(v1.x-v2.x,2) + pow(v1.y-v2.y,2) + pow(v1.z-v2.z,2))
 
         position = v1
@@ -44,11 +43,14 @@ class LineNode: SCNNode
         constraints = [SCNLookAtConstraint(target: ndV2)]
     }
 
+    //
+    // Compiler-required overrides
+    //
     override init() {
         super.init()
     }
     required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
+       super.init(coder: aDecoder)
     }
  }
 
@@ -73,6 +75,9 @@ func makeSphere( scene: SCNScene, pos: SCNVector3, radius: Double, color: UIColo
     return shapeNode
 }
 
+//
+// Just a near-trivial test of the ckinder/line generating code
+//
 func linesTest( scene: SCNScene ) {
     let mat = SCNMaterial()
     mat.diffuse.contents  = UIColor.white
@@ -96,14 +101,13 @@ func linesTest( scene: SCNScene ) {
         // Have to pass the parentnode because
         // it is not known during class instantiation of LineNode.
 
-        let ndLine = LineNode( parent: scene.rootNode,  // ** needed
-                             v1: v1,                // line (cylinder) starts here
-                             v2: v2,                // line ends here
-                             radius: 0.2,           // line thickness
-                             radSegmentCount: 6,    // hexagon tube
-                             material: [mat] )      // any material
+        let ndLine = LineNode( parent: scene.rootNode,  //  needed
+                               v1: v1,                // line (cylinder) starts here
+                               v2: v2,                // line ends here
+                               radius: 0.2,           // line thickness
+                               radSegmentCount: 6,    // hexagon tube
+                               material: [mat] )      // any material
 
         scene.rootNode.addChildNode(ndLine)
-            
     }
 }
