@@ -10,13 +10,12 @@ import SceneKit
 
 class ShapeUtil
 {
-    static func makeCylinder( parent:          SCNNode,         // because this node has not yet been assigned to a parent.
-                       v1:              SCNVector3,      // where line starts
-                       v2:              SCNVector3,      // where line ends
-                       radius:          CGFloat,         // line thicknes
-                       radSegmentCount: Int,             // number of sides of the line
-                       material:        [SCNMaterial] ) ->SCNNode // any material.
-    {
+    static func makeCylinder( v1:              SCNVector3,      // where line starts
+                              v2:              SCNVector3,      // where line ends
+                              radius:          CGFloat,         // line thicknes
+                              radSegmentCount: Int,             // number of sides of the line
+                              material:        [SCNMaterial] )  // any material.
+                         -> SCNNode {
         let node = SCNNode()
         
         let height = sqrt( pow(v1.x-v2.x,2) + pow(v1.y-v2.y,2) + pow(v1.z-v2.z,2))
@@ -26,7 +25,6 @@ class ShapeUtil
         let ndV2 = SCNNode()
         
         ndV2.position = v2
-        parent.addChildNode(ndV2)
         let ndZAlign = SCNNode()
         ndZAlign.eulerAngles.x = Float.pi/2
         
@@ -46,24 +44,9 @@ class ShapeUtil
     }
     
     //
-    // Compiler-required overrides
-    //
-    /*
-     override init() {
-     super.init()
-     }
-     required init?(coder aDecoder: NSCoder) {
-     super.init(coder: aDecoder)
-     }
-     */
-    
-    
-    //--------------------------------------
-    
     //
     //
-    //
-    static func makeSphere( scene: SCNScene, pos: SCNVector3, radius: Double, color: UIColor ) ->SCNNode {
+    static func makeSphere( pos: SCNVector3, radius: Double, color: UIColor ) ->SCNNode {
         
         var shapeNode : SCNNode
         var geomNode  : SCNGeometry
@@ -75,7 +58,6 @@ class ShapeUtil
         
         shapeNode.position = pos
         
-        //scene.rootNode.addChildNode(shapeNode)
         return shapeNode
     }
     

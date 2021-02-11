@@ -215,22 +215,19 @@ class SSViewController: UIViewController {
             
             // Just for testing, add two little spheres to check if lines are drawn correctly:
             // each line should run exactly from a green sphere to a red one
-            scene.rootNode.addChildNode( ShapeUtil.makeSphere( scene: scene, pos:v1, radius: 0.5, color: UIColor.green))
-            scene.rootNode.addChildNode( ShapeUtil.makeSphere( scene:scene, pos:v2, radius: 0.5, color: UIColor.red))
+            scene.rootNode.addChildNode( ShapeUtil.makeSphere( pos:v1, radius: 0.5, color: UIColor.green))
+            scene.rootNode.addChildNode( ShapeUtil.makeSphere( pos:v2, radius: 0.5, color: UIColor.red))
             
-            // Have to pass the parentnode because
-            // it is not known during class instantiation of LineNode.
+            let cylinder = ShapeUtil.makeCylinder( v1: v1,                // line (cylinder) starts here
+                                                   v2: v2,                // line ends here
+                                                   radius: 0.2,           // line thickness
+                                                   radSegmentCount: 6,    // hexagon tube
+                                                   material: [mat] )      // any material
             
-            let ndLine = ShapeUtil.makeCylinder( parent: scene.rootNode,  //  needed
-                                       v1: v1,                // line (cylinder) starts here
-                                       v2: v2,                // line ends here
-                                       radius: 0.2,           // line thickness
-                                       radSegmentCount: 6,    // hexagon tube
-                                       material: [mat] )      // any material
-            
-            scene.rootNode.addChildNode(ndLine)
+            scene.rootNode.addChildNode(cylinder)
         }
     }
+    
     //
     //
     //
