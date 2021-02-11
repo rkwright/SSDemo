@@ -8,7 +8,7 @@
 import UIKit
 import SceneKit
 
-class LineNode: SCNNode
+class ShapeUtil: SCNNode
 {
     init( parent:          SCNNode,         // because this node has not yet been assigned to a parent.
           v1:              SCNVector3,      // where line starts
@@ -101,7 +101,7 @@ func linesTest( scene: SCNScene ) {
         // Have to pass the parentnode because
         // it is not known during class instantiation of LineNode.
 
-        let ndLine = LineNode( parent: scene.rootNode,  //  needed
+        let ndLine = ShapeUtil( parent: scene.rootNode,  //  needed
                                v1: v1,                // line (cylinder) starts here
                                v2: v2,                // line ends here
                                radius: 0.2,           // line thickness

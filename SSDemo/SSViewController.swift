@@ -196,6 +196,42 @@ class SSViewController: UIViewController {
     //------------------------- App-specific ---------------------
 
     //
+    // Just a near-trivial test of the ckinder/line generating code
+    //
+    func linesTest( scene: SCNScene ) {
+        let mat = SCNMaterial()
+        mat.diffuse.contents  = UIColor.white
+        mat.specular.contents = UIColor.white
+        
+        // draw 100 lines (as cylinders) between random points.
+        for _ in 1...100 {
+            let v1 =  SCNVector3( x: Float.random(in: -50...50),
+                                  y: Float.random(in: -50...50),
+                                  z: Float.random(in: -50...50) )
+            
+            let v2 =  SCNVector3( x: Float.random(in: -50...50),
+                                  y: Float.random(in: -50...50),
+                                  z: Float.random(in: -50...50) )
+            
+            // Just for testing, add two little spheres to check if lines are drawn correctly:
+            // each line should run exactly from a green sphere to a red one
+            scene.rootNode.addChildNode( ShapeUtil.makeSphere( scene: scene, pos:v1, radius: 0.5, color: UIColor.green))
+            scene.rootNode.addChildNode( ShapeUtil.makeSphere( scene:scene, pos:v2, radius: 0.5, color: UIColor.red))
+            
+            // Have to pass the parentnode because
+            // it is not known during class instantiation of LineNode.
+            
+            let ndLine = ShapeUtil.makeCylinder( parent: scene.rootNode,  //  needed
+                                       v1: v1,                // line (cylinder) starts here
+                                       v2: v2,                // line ends here
+                                       radius: 0.2,           // line thickness
+                                       radSegmentCount: 6,    // hexagon tube
+                                       material: [mat] )      // any material
+            
+            scene.rootNode.addChildNode(ndLine)
+        }
+    }
+    //
     //
     //
     func setupPlanets () {
