@@ -32,8 +32,8 @@ class SSViewController: UIViewController {
         
         createSolarSystem()
         
-        //drawAxes(height: 10)
-        linesTest(scene: scnScene)
+        drawAxes(height: 50)
+        //linesTest(scene: scnScene)
     }
 
     //-------------- Environment Setup ----------------------------
@@ -128,64 +128,63 @@ class SSViewController: UIViewController {
     //
     //
     //
-    func drawAxis ( axis: AXES, axisColor: Int, axisHeight: Double ) {
-        let        AXIS_RADIUS   =    axisHeight/20.0
+    func drawAxis ( axis: AXES, axisColor: UInt, axisHeight: Double ) {
+        //let        AXIS_RADIUS   =    axisHeight/20.0
         let        AXIS_HEIGHT   =    axisHeight
-        let        AXIS_STEP     =    axisHeight/2.0
-        let        AXIS_SEGMENTS = 32
-        let        AXIS_GRAY     = 0x777777
-        let        AXIS_WHITE    = 0xEEEEEE
+        let        AXIS_STEP     =    axisHeight/20.0
+        //let        AXIS_SEGMENTS = 32
+        let        AXIS_GRAY : UInt    = 0x777777
+        let        AXIS_WHITE : UInt    = 0xEEEEEE
         
-        var     curColor:Int = AXIS_WHITE
-        var cylNode : SCNNode
-        var geomNode  : SCNGeometry
+        var     curColor:UIColor
+        var v1 : SCNVector3
+        var v2 : SCNVector3
 
-        
-        
-            //console.log("drawAxis " + axis + " ht: " +  AXIS_HEIGHT + ", " + AXIS_STEP + " color: " + axisColor);
-        
-        let numSteps = round(AXIS_HEIGHT/AXIS_STEP)
+       // let numSteps = round(AXIS_HEIGHT/AXIS_STEP)
         for i in 0...20 {
-            
-            //console.log("loop " +  i);
                 
-            var pos = -AXIS_HEIGHT / 2 + Double(i) * AXIS_STEP;
+            let pos = -AXIS_HEIGHT / 2 + Double(i) * AXIS_STEP;
         
             if (i & 1) == 0 {
-                curColor = axisColor;
+                curColor = ShapeUtil.UIColorFromRGB(rgbValue: axisColor)
             } else if (pos < 0) {
-                curColor = AXIS_GRAY;
+                curColor = ShapeUtil.UIColorFromRGB(rgbValue: AXIS_GRAY)
             } else {
-                curColor = AXIS_WHITE;
+                curColor = ShapeUtil.UIColorFromRGB(rgbValue: AXIS_WHITE)
             }
-                //console.log(i + " pos: " + pos + " color: " + curColor);
-                
-            // var geometry = new THREE.CylinderGeometry( AXIS_RADIUS, AXIS_RADIUS, AXIS_STEP, AXIS_SEGMENTS );
-            geomNode = SCNCylinder(radius: CGFloat(AXIS_RADIUS), height: CGFloat(AXIS_STEP))
-            geomNode.materials.first?.diffuse.contents = curColor
-     
-            cylNode = SCNNode(geometry: geomNode)
-      
-            pos += AXIS_STEP/2.0;
+
+            let mat = SCNMaterial()
+            mat.diffuse.contents = curColor
+
+            v1 = SCNVector3(0,0,0)
+            v2 = SCNVector3(0,0,0)
+            
             if axis == AXES.X_AXIS {
-                cylNode.position.x = Float(pos);
-                cylNode.rotation.z = Float.pi
+                v1.x = Float(pos);
+                v2.x = Float(pos) + Float(AXIS_STEP)
             }
             else if axis == AXES.Y_AXIS {
-                cylNode.rotation.y = Float.pi / 2.0
-                cylNode.position.y = Float(pos);
+                v1.y = Float(pos);
+                v2.y = Float(pos) + Float(AXIS_STEP)
             }
             else {
-                cylNode.position.z = Float(pos);
-                cylNode.rotation.x = Float.pi / 2.0
+                v1.z = Float(pos);
+                v2.z = Float(pos) + Float(AXIS_STEP)
             }
-                
-                //this.scene.add( cylinder );
+  
+            let cylNode = ShapeUtil.makeCylinder( v1: v1,                // line (cylinder) starts here
+                                                   v2: v2,                // line ends here
+                                                   radius: 0.2,           // line thickness
+                                                   radSegmentCount: 6,    // hexagon tube
+                                                   material: [mat] )      // any material
+              
             scnScene.rootNode.addChildNode(cylNode)
-
         }
     }
 
+    //
+    // Draw the three axes...
+    //
     func drawAxes ( height: Double ) {
         
         drawAxis(axis: AXES.X_AXIS, axisColor: 0xff0000, axisHeight: height);
