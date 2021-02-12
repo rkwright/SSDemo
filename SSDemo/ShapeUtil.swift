@@ -1,6 +1,6 @@
 //
-//  LineNode.swift
-//  SSDemo
+//  ShapeUtil.swift
+//  First used in SSDemo
 //
 //  Created by rkwright on 2/7/21.
 //
@@ -10,8 +10,8 @@ import SceneKit
 
 class ShapeUtil
 {
-    static func makeCylinder( v1:            SCNVector3,      // where line starts
-                              v2:            SCNVector3,      // where line ends
+    static func makeCylinder( v1:              SCNVector3,      // where line starts
+                              v2:              SCNVector3,      // where line ends
                               radius:          CGFloat,         // line thicknes
                               radSegmentCount: Int,             // number of sides of the line
                               material:        [SCNMaterial] )  // any material.
@@ -44,14 +44,14 @@ class ShapeUtil
     }
     
     //
-    //
+    // Simply create and return a sphere.
     //
     static func makeSphere( pos: SCNVector3, radius: Double, color: UIColor ) ->SCNNode {
         
         var shapeNode : SCNNode
         var geomNode  : SCNGeometry
         
-        geomNode = SCNSphere(radius: 1.0)
+        geomNode = SCNSphere(radius: CGFloat(radius))
         
         shapeNode = SCNNode(geometry: geomNode)
         geomNode.materials.first?.diffuse.contents = color
@@ -61,6 +61,9 @@ class ShapeUtil
         return shapeNode
     }
     
+    //
+    // Simple util - why doesn't Swift have this?
+    //
     static func UIColorFromRGB(rgbValue: UInt) -> UIColor {
         return UIColor(
             red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
@@ -79,6 +82,8 @@ class ShapeUtil
         obj.runAction(SCNAction.repeatForever(rotation))
     }
   
+    //--------------------- AXES subsection ---------------------------
+    
     enum AXES : Int {
         case X_AXIS
         case Y_AXIS
@@ -133,10 +138,10 @@ class ShapeUtil
             }
   
             let cylNode = ShapeUtil.makeCylinder( v1: v1,                // line (cylinder) starts here
-                                                   v2: v2,                // line ends here
-                                                   radius: 0.1,           // line thickness
-                                                   radSegmentCount: 6,    // hexagon tube
-                                                   material: [mat] )      // any material
+                                                  v2: v2,                // line ends here
+                                                  radius: 0.05,          // line thickness
+                                                  radSegmentCount: 6,    // hexagon tube
+                                                  material: [mat] )      // any material
               
             scene.rootNode.addChildNode(cylNode)
         }
@@ -152,12 +157,12 @@ class ShapeUtil
         drawAxis(scene: scene, axis: AXES.Z_AXIS, axisColor: 0x0000ff, axisHeight: height);
     }
     
-    //------------------------- App-specific ---------------------
+    //------------------------- Testing ---------------------
 
     //
     // Just a near-trivial test of the ckinder/line generating code
     //
-    func linesTest( scene: SCNScene ) {
+    static func linesTest( scene: SCNScene ) {
         let mat = SCNMaterial()
         mat.diffuse.contents  = UIColor.white
         mat.specular.contents = UIColor.white
@@ -174,7 +179,7 @@ class ShapeUtil
             
             // Just for testing, add two little spheres to check if lines are drawn correctly:
             // each line should run exactly from a green sphere to a red one
-            scene.rootNode.addChildNode( ShapeUtil.makeSphere( pos:v1, radius: 0.5, color: UIColor.green))
+            scene.rootNode.addChildNode( ShapeUtil.makeSphere( pos:v1, radius: 0.55, color: UIColor.green))
             scene.rootNode.addChildNode( ShapeUtil.makeSphere( pos:v2, radius: 0.5, color: UIColor.red))
             
             let cylinder = ShapeUtil.makeCylinder( v1: v1,                // line (cylinder) starts here
@@ -186,5 +191,4 @@ class ShapeUtil
             scene.rootNode.addChildNode(cylinder)
         }
     }
-    
-}
+}   // end of class
