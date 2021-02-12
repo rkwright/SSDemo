@@ -139,7 +139,7 @@ class ShapeUtil
   
             let cylNode = ShapeUtil.makeCylinder( v1: v1,                // line (cylinder) starts here
                                                   v2: v2,                // line ends here
-                                                  radius: 0.05,          // line thickness
+                                                  radius: 0.1,           // line thickness
                                                   radSegmentCount: 6,    // hexagon tube
                                                   material: [mat] )      // any material
               

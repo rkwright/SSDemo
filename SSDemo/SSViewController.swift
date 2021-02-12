@@ -9,9 +9,11 @@ import UIKit
 import SceneKit
 
 struct PlanetParm {
+    let name        : String    // name of celestial body as well as the root of the image name
     let orbitRadius : Float     // radius of the orbit
     let diameter    : Float     // diameter of the celestial body
-    let name        : String    // name of celestial body as well as the root of the image name
+    let yearLength  : Float     // planet's rotational period, in seconds
+    let dayLength   : Float     // planet's own rotational period, i.e. daylength
 }
 
 class SSViewController: UIViewController {
@@ -31,9 +33,6 @@ class SSViewController: UIViewController {
         setupCamera()
         
         createSolarSystem()
-        
-        ShapeUtil.drawAxes(scene: scnScene, height: 50)
-        // ShapeUtil.linesTest(scene: scnScene)
     }
 
     //-------------- Environment Setup ----------------------------
@@ -44,7 +43,6 @@ class SSViewController: UIViewController {
     func setupView() {
         scnView = self.view as? SCNView
         scnView.showsStatistics = true
-        scnView.allowsCameraControl = true
         scnView.autoenablesDefaultLighting = true
         scnView.delegate = self
         scnView.isPlaying = true
@@ -57,6 +55,8 @@ class SSViewController: UIViewController {
     func setupScene() {
         scnScene = SCNScene()
         scnView.scene = scnScene
+        
+        ShapeUtil.drawAxes(scene: scnScene, height: 50)
     }
     
     //
@@ -76,8 +76,8 @@ class SSViewController: UIViewController {
     //
     // Create the planet, given its size and an image to use
     //
-    // func createPlanet(orbitSize: Float, radius: Float, image: String) -> SCNNode{
     func createPlanet( parms : PlanetParm ) -> SCNNode{
+        
         let planetGeom = SCNSphere(radius: CGFloat(parms.diameter)/2.0)
         
         let material = SCNMaterial()
@@ -85,10 +85,24 @@ class SSViewController: UIViewController {
         planetGeom.materials = [material]
 
         let planet = SCNNode(geometry: planetGeom)
+        
         // Use the image name as a label - fragile!
         planet.name = parms.name
         planet.position = SCNVector3(x: parms.orbitRadius, y: 0, z: 0)
          
+        ShapeUtil.rotateObject(obj: planet, rotation: parms.dayLength, duration: 1)
+
+        if parms.orbitRadius > 0.0 {
+            let orbit = createOrbit(orbitRadius: parms.orbitRadius)
+            orbit.addChildNode(planet)
+            ShapeUtil.rotateObject(obj: orbit, rotation: parms.yearLength, duration: 1)
+            scnScene.rootNode.addChildNode(orbit)
+
+            return orbit
+        }
+        
+        scnScene.rootNode.addChildNode(planet)
+
         return planet
      }
     
@@ -112,14 +126,14 @@ class SSViewController: UIViewController {
 
     
     //
-    //
+    // Set up the "database" of planets
     //
     func setupPlanets () {
        
-        planets.append(PlanetParm(orbitRadius: 0.0, diameter: 0.8, name: "sun"))
-        planets.append(PlanetParm(orbitRadius: 1.9, diameter: 0.3, name: "mercury"))
-        planets.append(PlanetParm(orbitRadius: 3.5, diameter: 0.5, name: "venus"))
-        planets.append(PlanetParm(orbitRadius: 4.0, diameter: 0.5, name: "mars"))
+        planets.append( PlanetParm(name: "sun", orbitRadius: 0.01, diameter: 0.8, yearLength: -0.3, dayLength: 1.0 ))
+        planets.append( PlanetParm(name: "mercury", orbitRadius: 1.9, diameter: 0.3, yearLength: 1.5, dayLength: 0.6 ))
+        planets.append( PlanetParm(name: "venus", orbitRadius: 3.5, diameter: 0.5, yearLength: 0.6, dayLength: 1.5  ))
+        planets.append( PlanetParm(name: "mars", orbitRadius: 4.0, diameter: 0.5, yearLength: 0.8, dayLength: 1.5 ))
     }
     
     //
@@ -129,32 +143,32 @@ class SSViewController: UIViewController {
         
         // add in the Sun
         let sun = createPlanet(parms: planets[0])
-        ShapeUtil.rotateObject(obj: sun, rotation: -0.3, duration: 1)
         scnScene.rootNode.addChildNode(sun)
+        //ShapeUtil.rotateObject(obj: sun, rotation: -0.3, duration: 1)
 
         // then Mercury
-        let mercuryOrbit = createOrbit(orbitRadius: 1.9)
+       // let mercuryOrbit = createOrbit(orbitRadius: 1.9)
         let mercury = createPlanet(parms: planets[1])
-        ShapeUtil.rotateObject(obj: mercury, rotation: 0.6, duration: 0.4)
-        ShapeUtil.rotateObject(obj: mercuryOrbit, rotation: 0.6,  duration: 1)
-        mercuryOrbit.addChildNode(mercury)
-        scnScene.rootNode.addChildNode(mercuryOrbit)
-        
+      //  mercuryOrbit.addChildNode(mercury)
+      //  scnScene.rootNode.addChildNode(mercuryOrbit)
+      //  ShapeUtil.rotateObject(obj: mercury, rotation: 1.5, duration: 1.0)
+      //  ShapeUtil.rotateObject(obj: mercuryOrbit, rotation: 0.6,  duration: 1)
+
         // then Venus
-        let venusOrbit = createOrbit(orbitRadius: 3.5)
+ //       let venusOrbit = createOrbit(orbitRadius: 3.5)
         let venus = createPlanet(parms: planets[2])
-        ShapeUtil.rotateObject(obj: venus, rotation: 0.6, duration: 0.4)
-        ShapeUtil.rotateObject(obj: venusOrbit, rotation: 0.6,  duration: 1)
-        venusOrbit.addChildNode(venus)
-        scnScene.rootNode.addChildNode(venusOrbit)
-        
+ //       venusOrbit.addChildNode(venus)
+//        scnScene.rootNode.addChildNode(venusOrbit)
+//        ShapeUtil.rotateObject(obj: venus, rotation: 0.6, duration: 0.4)
+//        ShapeUtil.rotateObject(obj: venusOrbit, rotation: 0.6,  duration: 1)
+
         // then Mars
-        let marsOrbit = createOrbit(orbitRadius: 4.0)
+ //       let marsOrbit = createOrbit(orbitRadius: 4.0)
         let mars = createPlanet(parms: planets[3])
-        ShapeUtil.rotateObject(obj: mars, rotation: 0.6, duration: 0.4)
-        ShapeUtil.rotateObject(obj: marsOrbit, rotation: 0.6,  duration: 1)
-        marsOrbit.addChildNode(mars)
-        scnScene.rootNode.addChildNode(marsOrbit)
+//        marsOrbit.addChildNode(mars)
+//        scnScene.rootNode.addChildNode(marsOrbit)
+//        ShapeUtil.rotateObject(obj: mars, rotation: 0.6, duration: 0.4)
+ //       ShapeUtil.rotateObject(obj: marsOrbit, rotation: 0.6,  duration: 1)
     }
     
 }   // end of class
