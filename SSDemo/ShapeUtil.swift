@@ -94,16 +94,16 @@ class ShapeUtil
     //
     //
     static func drawAxis ( scene: SCNScene, axis: AXES, axisColor: UInt, axisHeight: Double ) {
-        //let        AXIS_RADIUS   =    axisHeight/20.0
+        //let      AXIS_RADIUS   =    axisHeight/20.0
         let        AXIS_HEIGHT   =    axisHeight
         let        AXIS_STEP     =    axisHeight/20.0
-        //let        AXIS_SEGMENTS = 32
+        //let      AXIS_SEGMENTS = 32
         let        AXIS_GRAY : UInt    = 0x777777
-        let        AXIS_WHITE : UInt    = 0xEEEEEE
+        let        AXIS_WHITE : UInt   = 0xEEEEEE
         
-        var     curColor:UIColor
-        var v1 : SCNVector3
-        var v2 : SCNVector3
+        var        curColor:UIColor
+        var        v1 : SCNVector3
+        var        v2 : SCNVector3
 
        // let numSteps = round(AXIS_HEIGHT/AXIS_STEP)
         for i in 0...20 {
