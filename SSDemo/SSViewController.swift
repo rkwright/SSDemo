@@ -32,7 +32,7 @@ class SSViewController: UIViewController {
         
         createSolarSystem()
         
-        drawAxes(height: 50)
+        ShapeUtil.drawAxes(scene: scnScene, height: 50)
         //linesTest(scene: scnScene)
     }
 
@@ -110,122 +110,6 @@ class SSViewController: UIViewController {
         return orbitNode
     }
 
-    //
-    // Set up an Action for the supplied object
-    //
-    func rotateObject ( obj: SCNNode, rotation: Float, duration: Float ) {
-        
-        let rotation = SCNAction.rotateBy(x:0,y:CGFloat(rotation),z:0, duration: TimeInterval(duration))
-        obj.runAction(SCNAction.repeatForever(rotation))
-    }
-  
-    enum AXES : Int {
-        case X_AXIS
-        case Y_AXIS
-        case Z_AXIS
-    }
-    
-    //
-    //
-    //
-    func drawAxis ( axis: AXES, axisColor: UInt, axisHeight: Double ) {
-        //let        AXIS_RADIUS   =    axisHeight/20.0
-        let        AXIS_HEIGHT   =    axisHeight
-        let        AXIS_STEP     =    axisHeight/20.0
-        //let        AXIS_SEGMENTS = 32
-        let        AXIS_GRAY : UInt    = 0x777777
-        let        AXIS_WHITE : UInt    = 0xEEEEEE
-        
-        var     curColor:UIColor
-        var v1 : SCNVector3
-        var v2 : SCNVector3
-
-       // let numSteps = round(AXIS_HEIGHT/AXIS_STEP)
-        for i in 0...20 {
-                
-            let pos = -AXIS_HEIGHT / 2 + Double(i) * AXIS_STEP;
-        
-            if (i & 1) == 0 {
-                curColor = ShapeUtil.UIColorFromRGB(rgbValue: axisColor)
-            } else if (pos < 0) {
-                curColor = ShapeUtil.UIColorFromRGB(rgbValue: AXIS_GRAY)
-            } else {
-                curColor = ShapeUtil.UIColorFromRGB(rgbValue: AXIS_WHITE)
-            }
-
-            let mat = SCNMaterial()
-            mat.diffuse.contents = curColor
-
-            v1 = SCNVector3(0,0,0)
-            v2 = SCNVector3(0,0,0)
-            
-            if axis == AXES.X_AXIS {
-                v1.x = Float(pos);
-                v2.x = Float(pos) + Float(AXIS_STEP)
-            }
-            else if axis == AXES.Y_AXIS {
-                v1.y = Float(pos);
-                v2.y = Float(pos) + Float(AXIS_STEP)
-            }
-            else {
-                v1.z = Float(pos);
-                v2.z = Float(pos) + Float(AXIS_STEP)
-            }
-  
-            let cylNode = ShapeUtil.makeCylinder( v1: v1,                // line (cylinder) starts here
-                                                   v2: v2,                // line ends here
-                                                   radius: 0.2,           // line thickness
-                                                   radSegmentCount: 6,    // hexagon tube
-                                                   material: [mat] )      // any material
-              
-            scnScene.rootNode.addChildNode(cylNode)
-        }
-    }
-
-    //
-    // Draw the three axes...
-    //
-    func drawAxes ( height: Double ) {
-        
-        drawAxis(axis: AXES.X_AXIS, axisColor: 0xff0000, axisHeight: height);
-        drawAxis(axis: AXES.Y_AXIS, axisColor: 0x00ff00, axisHeight: height);
-        drawAxis(axis: AXES.Z_AXIS, axisColor: 0x0000ff, axisHeight: height);
-    }
-    
-    //------------------------- App-specific ---------------------
-
-    //
-    // Just a near-trivial test of the ckinder/line generating code
-    //
-    func linesTest( scene: SCNScene ) {
-        let mat = SCNMaterial()
-        mat.diffuse.contents  = UIColor.white
-        mat.specular.contents = UIColor.white
-        
-        // draw 100 lines (as cylinders) between random points.
-        for _ in 1...100 {
-            let v1 =  SCNVector3( x: Float.random(in: -50...50),
-                                  y: Float.random(in: -50...50),
-                                  z: Float.random(in: -50...50) )
-            
-            let v2 =  SCNVector3( x: Float.random(in: -50...50),
-                                  y: Float.random(in: -50...50),
-                                  z: Float.random(in: -50...50) )
-            
-            // Just for testing, add two little spheres to check if lines are drawn correctly:
-            // each line should run exactly from a green sphere to a red one
-            scene.rootNode.addChildNode( ShapeUtil.makeSphere( pos:v1, radius: 0.5, color: UIColor.green))
-            scene.rootNode.addChildNode( ShapeUtil.makeSphere( pos:v2, radius: 0.5, color: UIColor.red))
-            
-            let cylinder = ShapeUtil.makeCylinder( v1: v1,                // line (cylinder) starts here
-                                                   v2: v2,                // line ends here
-                                                   radius: 0.2,           // line thickness
-                                                   radSegmentCount: 6,    // hexagon tube
-                                                   material: [mat] )      // any material
-            
-            scene.rootNode.addChildNode(cylinder)
-        }
-    }
     
     //
     //
@@ -245,30 +129,30 @@ class SSViewController: UIViewController {
         
         // add in the Sun
         let sun = createPlanet(parms: planets[0])
-        rotateObject(obj: sun, rotation: -0.3, duration: 1)
+        ShapeUtil.rotateObject(obj: sun, rotation: -0.3, duration: 1)
         scnScene.rootNode.addChildNode(sun)
 
         // then Mercury
         let mercuryOrbit = createOrbit(orbitRadius: 1.9)
         let mercury = createPlanet(parms: planets[1])
-        rotateObject(obj: mercury, rotation: 0.6, duration: 0.4)
-        rotateObject(obj: mercuryOrbit, rotation: 0.6,  duration: 1)
+        ShapeUtil.rotateObject(obj: mercury, rotation: 0.6, duration: 0.4)
+        ShapeUtil.rotateObject(obj: mercuryOrbit, rotation: 0.6,  duration: 1)
         mercuryOrbit.addChildNode(mercury)
         scnScene.rootNode.addChildNode(mercuryOrbit)
         
         // then Venus
         let venusOrbit = createOrbit(orbitRadius: 3.5)
         let venus = createPlanet(parms: planets[2])
-        rotateObject(obj: venus, rotation: 0.6, duration: 0.4)
-        rotateObject(obj: venusOrbit, rotation: 0.6,  duration: 1)
+        ShapeUtil.rotateObject(obj: venus, rotation: 0.6, duration: 0.4)
+        ShapeUtil.rotateObject(obj: venusOrbit, rotation: 0.6,  duration: 1)
         venusOrbit.addChildNode(venus)
         scnScene.rootNode.addChildNode(venusOrbit)
         
         // then Mars
         let marsOrbit = createOrbit(orbitRadius: 4.0)
         let mars = createPlanet(parms: planets[3])
-        rotateObject(obj: mars, rotation: 0.6, duration: 0.4)
-        rotateObject(obj: marsOrbit, rotation: 0.6,  duration: 1)
+        ShapeUtil.rotateObject(obj: mars, rotation: 0.6, duration: 0.4)
+        ShapeUtil.rotateObject(obj: marsOrbit, rotation: 0.6,  duration: 1)
         marsOrbit.addChildNode(mars)
         scnScene.rootNode.addChildNode(marsOrbit)
     }
