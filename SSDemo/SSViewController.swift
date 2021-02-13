@@ -60,7 +60,7 @@ class SSViewController: UIViewController {
         
         self.view.backgroundColor = .black
         
-        ShapeUtil.drawAxes(scene: scnScene, height: 50)
+        ShapeUtil.drawAxes(scene: scnScene, height: 50, radius: 0.2)
     }
     
     //
@@ -125,17 +125,17 @@ class SSViewController: UIViewController {
     // Set up the "database" of planets
     //
     func setupPlanets () {
-       
-        planets.append( PlanetParm(name: "sun", orbitRadius: 0.01, diameter: 2.0, yearLength: -0.3, dayLength: 1.0 ))
-        planets.append( PlanetParm(name: "mercury", orbitRadius: 1.9, diameter: 0.3, yearLength: 1.5, dayLength: 0.6 ))
-        planets.append( PlanetParm(name: "venus", orbitRadius: 3.5, diameter: 0.5, yearLength: 0.6, dayLength: 1.5  ))
-        planets.append( PlanetParm(name: "earth", orbitRadius: 4.0, diameter: 0.5, yearLength: 0.8, dayLength: 1.5 ))
-        planets.append( PlanetParm(name: "mars", orbitRadius: 4.2, diameter: 0.5, yearLength: 0.8, dayLength: 1.5 ))
-        planets.append( PlanetParm(name: "jupiter", orbitRadius: 6.0, diameter: 1.0, yearLength: 0.8, dayLength: 1.5 ))
-        planets.append( PlanetParm(name: "saturn", orbitRadius: 7.0, diameter: 0.5, yearLength: 0.8, dayLength: 1.5 ))
-        planets.append( PlanetParm(name: "uranus", orbitRadius: 9.0, diameter: 0.5, yearLength: 0.8, dayLength: 1.5 ))
-        planets.append( PlanetParm(name: "neptune", orbitRadius: 12.0, diameter: 0.5, yearLength: 0.8, dayLength: 1.5 ))
-        planets.append( PlanetParm(name: "pluto", orbitRadius: 15.0, diameter: 0.4, yearLength: 4.8, dayLength: 1.5 ))
+                                                    //  10e6 km          km                  days                 hours 
+        planets.append( PlanetParm(name: "sun",     orbitRadius: 0.01,   diameter: 1.3927e6, yearLength: 1.0,     dayLength: 0 ))
+        planets.append( PlanetParm(name: "mercury", orbitRadius: 57.9,   diameter: 4879,     yearLength: 88.0,    dayLength: 4222.6 ))
+        planets.append( PlanetParm(name: "venus",   orbitRadius: 108.2,  diameter: 12104,    yearLength: 224.7,   dayLength: 2802.0  ))
+        planets.append( PlanetParm(name: "earth",   orbitRadius: 149.6,  diameter: 12756,    yearLength: 365.25,  dayLength: 24 ))
+        planets.append( PlanetParm(name: "mars",    orbitRadius: 227.9,  diameter: 6792,     yearLength: 687.0,   dayLength: 24.7 ))
+        planets.append( PlanetParm(name: "jupiter", orbitRadius: 778.6,  diameter: 142984,   yearLength: 4331.0,  dayLength: 9.9 ))
+        planets.append( PlanetParm(name: "saturn",  orbitRadius: 1433.5, diameter: 120536,   yearLength: 10747.0, dayLength: 10.7 ))
+        planets.append( PlanetParm(name: "uranus",  orbitRadius: 2872.5, diameter: 51118,    yearLength: 30589,   dayLength: 17.2 ))
+        planets.append( PlanetParm(name: "neptune", orbitRadius: 4495.1, diameter: 49528,    yearLength: 59800,   dayLength: 16.1 ))
+        planets.append( PlanetParm(name: "pluto",   orbitRadius: 5906.4, diameter: 2370,     yearLength: 90560,   dayLength: 153.3 ))
 
     }
     

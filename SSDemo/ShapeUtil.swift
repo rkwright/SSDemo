@@ -10,11 +10,11 @@ import SceneKit
 
 class ShapeUtil
 {
-    static func makeCylinder( v1:              SCNVector3,      // where line starts
-                              v2:              SCNVector3,      // where line ends
-                              radius:          CGFloat,         // line thicknes
-                              radSegmentCount: Int,             // number of sides of the line
-                              material:        [SCNMaterial] )  // any material.
+    static func makeCylinder( v1:              SCNVector3,      // where cylinder starts
+                              v2:              SCNVector3,      // where cylinder ends
+                              radius:          CGFloat,         // cylinder thicknes
+                              radSegmentCount: Int,             // number of sides of the cylinder
+                              material:        [SCNMaterial] )  // some material.
                          -> SCNNode {
         let node = SCNNode()
         
@@ -91,32 +91,23 @@ class ShapeUtil
     }
     
     //
+    // Draw single XYZ axis
     //
-    //
-    static func drawAxis ( scene: SCNScene, axis: AXES, axisColor: UInt, axisHeight: Double ) {
-        //let      AXIS_RADIUS   =    axisHeight/20.0
-        let        AXIS_HEIGHT   =    axisHeight
-        let        AXIS_STEP     =    axisHeight/20.0
-        //let      AXIS_SEGMENTS = 32
-        let        AXIS_GRAY : UInt    = 0x777777
-        let        AXIS_WHITE : UInt   = 0xEEEEEE
+    static func drawAxis ( scene: SCNScene, axis: AXES, axisColor: UIColor, axisHeight: Double, radius: Double ) {
+        let        axisStep  : Float   = Float(axisHeight)/20.0
+        let        axisGray  : UIColor = UIColor.lightGray
+        let        axisWhite : UIColor = UIColor.white
         
-        var        curColor:UIColor
-        var        v1 : SCNVector3
-        var        v2 : SCNVector3
+        var        curColor  : UIColor
+        var        v1        : SCNVector3
+        var        v2        : SCNVector3
 
        // let numSteps = round(AXIS_HEIGHT/AXIS_STEP)
         for i in 0...20 {
                 
-            let pos = -AXIS_HEIGHT / 2 + Double(i) * AXIS_STEP;
+            let pos = -axisHeight / 2 + Double(i) * Double(axisStep)
         
-            if (i & 1) == 0 {
-                curColor = ShapeUtil.UIColorFromRGB(rgbValue: axisColor)
-            } else if (pos < 0) {
-                curColor = ShapeUtil.UIColorFromRGB(rgbValue: AXIS_GRAY)
-            } else {
-                curColor = ShapeUtil.UIColorFromRGB(rgbValue: AXIS_WHITE)
-            }
+            curColor = (i & 1) != 0 ? axisColor : (pos < 0) ? axisGray : axisWhite
 
             let mat = SCNMaterial()
             mat.diffuse.contents = curColor
@@ -126,15 +117,15 @@ class ShapeUtil
             
             if axis == AXES.X_AXIS {
                 v1.x = Float(pos);
-                v2.x = Float(pos) + Float(AXIS_STEP)
+                v2.x = Float(pos) + axisStep
             }
             else if axis == AXES.Y_AXIS {
                 v1.y = Float(pos);
-                v2.y = Float(pos) + Float(AXIS_STEP)
+                v2.y = Float(pos) + axisStep
             }
             else {
                 v1.z = Float(pos);
-                v2.z = Float(pos) + Float(AXIS_STEP)
+                v2.z = Float(pos) + axisStep
             }
   
             let cylNode = ShapeUtil.makeCylinder( v1: v1,                // line (cylinder) starts here
@@ -150,11 +141,11 @@ class ShapeUtil
     //
     // Draw the three axes...
     //
-    static func drawAxes ( scene: SCNScene, height: Double ) {
+    static func drawAxes ( scene: SCNScene, height: Double, radius: Double ) {
         
-        drawAxis(scene: scene, axis: AXES.X_AXIS, axisColor: 0xff0000, axisHeight: height);
-        drawAxis(scene: scene, axis: AXES.Y_AXIS, axisColor: 0x00ff00, axisHeight: height);
-        drawAxis(scene: scene, axis: AXES.Z_AXIS, axisColor: 0x0000ff, axisHeight: height);
+        drawAxis(scene: scene, axis: AXES.X_AXIS, axisColor: UIColor.red, axisHeight: height, radius: radius);
+        drawAxis(scene: scene, axis: AXES.Y_AXIS, axisColor: UIColor.green, axisHeight: height, radius: radius);
+        drawAxis(scene: scene, axis: AXES.Z_AXIS, axisColor: UIColor.blue, axisHeight: height, radius: radius);
     }
     
     //------------------------- Testing ---------------------
