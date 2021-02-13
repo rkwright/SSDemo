@@ -126,10 +126,17 @@ class SSViewController: UIViewController {
     //
     func setupPlanets () {
        
-        planets.append( PlanetParm(name: "sun", orbitRadius: 0.01, diameter: 0.8, yearLength: -0.3, dayLength: 1.0 ))
+        planets.append( PlanetParm(name: "sun", orbitRadius: 0.01, diameter: 2.0, yearLength: -0.3, dayLength: 1.0 ))
         planets.append( PlanetParm(name: "mercury", orbitRadius: 1.9, diameter: 0.3, yearLength: 1.5, dayLength: 0.6 ))
         planets.append( PlanetParm(name: "venus", orbitRadius: 3.5, diameter: 0.5, yearLength: 0.6, dayLength: 1.5  ))
-        planets.append( PlanetParm(name: "mars", orbitRadius: 4.0, diameter: 0.5, yearLength: 0.8, dayLength: 1.5 ))
+        planets.append( PlanetParm(name: "earth", orbitRadius: 4.0, diameter: 0.5, yearLength: 0.8, dayLength: 1.5 ))
+        planets.append( PlanetParm(name: "mars", orbitRadius: 4.2, diameter: 0.5, yearLength: 0.8, dayLength: 1.5 ))
+        planets.append( PlanetParm(name: "jupiter", orbitRadius: 6.0, diameter: 1.0, yearLength: 0.8, dayLength: 1.5 ))
+        planets.append( PlanetParm(name: "saturn", orbitRadius: 7.0, diameter: 0.5, yearLength: 0.8, dayLength: 1.5 ))
+        planets.append( PlanetParm(name: "uranus", orbitRadius: 9.0, diameter: 0.5, yearLength: 0.8, dayLength: 1.5 ))
+        planets.append( PlanetParm(name: "neptune", orbitRadius: 12.0, diameter: 0.5, yearLength: 0.8, dayLength: 1.5 ))
+        planets.append( PlanetParm(name: "pluto", orbitRadius: 15.0, diameter: 0.4, yearLength: 4.8, dayLength: 1.5 ))
+
     }
     
     //
@@ -138,13 +145,10 @@ class SSViewController: UIViewController {
     func createSolarSystem () {
         
         // add in the Sun, then the rest of the planets
-        createPlanet(parms: planets[0])
- 
-        createPlanet(parms: planets[1])
-
-        createPlanet(parms: planets[2])
-
-        createPlanet(parms: planets[3])
+        
+        for i in 0...planets.count-1 {
+            createPlanet(parms: planets[i])
+        }
     }
     
 }   // end of class
