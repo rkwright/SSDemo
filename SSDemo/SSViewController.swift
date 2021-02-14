@@ -10,11 +10,85 @@ import SceneKit
 
 struct PlanetParm {
     let name        : String    // name of celestial body as well as the root of the image name
-    let orbitRadius : Float     // radius of the orbit
-    let diameter    : Float     // diameter of the celestial body
-    let yearLength  : Float     // planet's rotational period, in seconds
-    let dayLength   : Float     // planet's own rotational period, i.e. daylength
+    let orbitRadius : Float     // radius of the orbit (millions of km)
+    let diameter    : Float     // diameter of the celestial body (km)
+    let yearLength  : Float     // planet's rotational period, in days
+    let dayLength   : Float     // planet's own rotational period, i.e. daylength, in hours
+
+    let yearScale   : Float = 8 / 365  // from orbital period in days to seconds on screen
+    let dayScale    : Float = 1 / 24   // from day rotation period in hours to seconds on screen
+    let orbitScale  : Float       // from millions of km to absolute units on screen
+    let diamScale   : Float       // from km to absolute units on screen
+ 
+    // define the conversions needed
+    let jupiterNodeDiam : Float = 1.0
+    let mercNodeDiam    : Float = 0.2
+    let jupiterDiam     : Float = 142984
+    let mercDiam        : Float = 4879
+    
+    let plutoOrbit      : Float = 90560.0
+    let mercOrbit       : Float = 57.9
+    let plutoNodeOrbit  : Float = 20.0
+    let mercNodeOrbit   : Float = 0.3
+
+    init( name: String, orbitRadius: Double, diameter: Double, yearLength: Double, dayLength: Double) {
+        print("Init")
+        self.name = name
+        self.orbitRadius = Float(orbitRadius)
+        self.diameter = Float(diameter)
+        self.yearLength = Float(yearLength)
+        self.dayLength = Float(dayLength)
+        
+        diamScale = (jupiterNodeDiam - mercNodeDiam) / (log(jupiterDiam) - log(mercNodeDiam))
+        orbitScale = (plutoNodeOrbit - mercNodeOrbit) / (log(plutoOrbit) - log(mercOrbit))
+    }
+    
+    func getScaledOrbit() -> Float {
+        return mercNodeOrbit + (log(self.orbitRadius) - log(mercOrbit)) * orbitScale
+    }
+    
+    func getScaledDiam() -> Float {
+        return mercNodeDiam + (log(self.diameter) - log(mercDiam)) * diamScale
+    }
+    
+    //
+    // Get the length of a single day, converted to seconds, based on Earth day of 1 second
+    //
+    func getDayLenSec () -> Float {
+        return self.dayLength * dayScale
+    }
+    
+    //
+    // Get the length of a single year, converted to seconds, based on Earth year of 8 seconds
+    //
+    func getYearLenSec () -> Float {
+        return self.yearLength * yearScale
+    }
 }
+
+//-------------------------------------------------------
+struct SemiLogFit {
+    let d0,d1,s0,s1 : Double
+    let slope       : Double
+    
+    init( d0: Double, d1: Double, s0: Double, s1: Double ) {
+        self.d0 = d0
+        self.d1 = d1
+        self.s0 = s0
+        self.s1 = s1
+        
+        slope = (s1 - s0) / (log(d1) - log(d0))
+    }
+    
+    //
+    // Use the semilog equation to predict new value
+    //
+    func calc ( x: Double) -> Double {
+        return pow((log(x) - log(d0) * slope),10) + s0
+    }
+}
+
+//----------------------------------------------------------
 
 class SSViewController: UIViewController {
     var scnView     : SCNView!
@@ -82,7 +156,7 @@ class SSViewController: UIViewController {
     //
     func createPlanet( parms : PlanetParm ) {
         
-        let planetGeom = SCNSphere(radius: CGFloat(parms.diameter)/2.0)
+        let planetGeom = SCNSphere(radius: CGFloat(parms.getScaledDiam())/2.0)
         
         let material = SCNMaterial()
         material.diffuse.contents = UIImage(named: "\(parms.name).jpg")
@@ -92,13 +166,13 @@ class SSViewController: UIViewController {
         
         // Use the image name as a label - fragile!
         planet.name = parms.name
-        planet.position = SCNVector3(x: parms.orbitRadius, y: 0, z: 0)
+        planet.position = SCNVector3(x: parms.getScaledOrbit(), y: 0, z: 0)
          
-        ShapeUtil.rotateObject(obj: planet, rotation: parms.dayLength, duration: 1)
+        ShapeUtil.rotateObject(obj: planet, rotation: Float.pi*2, duration: parms.getDayLenSec())
 
-        let orbit = createOrbit(orbitRadius: parms.orbitRadius)
+        let orbit = createOrbit(orbitRadius: parms.getScaledOrbit())
         orbit.addChildNode(planet)
-        ShapeUtil.rotateObject(obj: orbit, rotation: parms.yearLength, duration: 1)
+        ShapeUtil.rotateObject(obj: orbit, rotation: Float.pi*2, duration: parms.getYearLenSec())
         scnScene.rootNode.addChildNode(orbit)
      }
     
@@ -116,7 +190,6 @@ class SSViewController: UIViewController {
         orbit.materials = [material]
             
         let orbitNode = SCNNode(geometry: orbit)
-        //orbitNode.position = SCNVector3(x: orbitRadius, y: 0, z: 0)
 
         return orbitNode
     }
@@ -125,7 +198,7 @@ class SSViewController: UIViewController {
     // Set up the "database" of planets
     //
     func setupPlanets () {
-                                                    //  10e6 km          km                  days                 hours 
+                                                    //  10e6 km          km                  days                 hours
         planets.append( PlanetParm(name: "sun",     orbitRadius: 0.01,   diameter: 1.3927e6, yearLength: 1.0,     dayLength: 0 ))
         planets.append( PlanetParm(name: "mercury", orbitRadius: 57.9,   diameter: 4879,     yearLength: 88.0,    dayLength: 4222.6 ))
         planets.append( PlanetParm(name: "venus",   orbitRadius: 108.2,  diameter: 12104,    yearLength: 224.7,   dayLength: 2802.0  ))
