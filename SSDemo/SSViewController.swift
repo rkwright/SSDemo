@@ -21,15 +21,15 @@ struct PlanetParm {
     let diamScale   : Float       // from km to absolute units on screen
  
     // define the conversions needed
-    let jupiterNodeDiam : Float = 1.0
-    let mercNodeDiam    : Float = 0.2
-    let jupiterDiam     : Float = 142984
-    let mercDiam        : Float = 4879
+    let maxNodeDiam  : Float = 2.5
+    let minNodeDiam  : Float = 0.1
+    let maxDiam      : Float = 3.14e06 //142984
+    let minDiam      : Float = 4879
     
-    let plutoOrbit      : Float = 90560.0
-    let mercOrbit       : Float = 57.9
-    let plutoNodeOrbit  : Float = 20.0
-    let mercNodeOrbit   : Float = 0.3
+    let maxOrbit     : Float = 90560.0
+    let minOrbit     : Float = 57.9
+    let maxNodeOrbit : Float = 20.0
+    let minNodeOrbit : Float = 0.3
 
     init( name: String, orbitRadius: Double, diameter: Double, yearLength: Double, dayLength: Double) {
         print("Init")
@@ -39,16 +39,16 @@ struct PlanetParm {
         self.yearLength = Float(yearLength)
         self.dayLength = Float(dayLength)
         
-        diamScale = (jupiterNodeDiam - mercNodeDiam) / (log(jupiterDiam) - log(mercNodeDiam))
-        orbitScale = (plutoNodeOrbit - mercNodeOrbit) / (log(plutoOrbit) - log(mercOrbit))
+        diamScale = (maxNodeDiam - minNodeDiam) / (log(maxDiam) - log(minNodeDiam))
+        orbitScale = (maxNodeOrbit - minNodeOrbit) / (log(maxOrbit) - log(minOrbit))
     }
     
     func getScaledOrbit() -> Float {
-        return mercNodeOrbit + (log(self.orbitRadius) - log(mercOrbit)) * orbitScale
+        return minNodeOrbit + (log(self.orbitRadius) - log(minOrbit)) * orbitScale
     }
     
     func getScaledDiam() -> Float {
-        return mercNodeDiam + (log(self.diameter) - log(mercDiam)) * diamScale
+        return minNodeDiam + (log(self.diameter) - log(minDiam)) * diamScale
     }
     
     //
@@ -134,7 +134,7 @@ class SSViewController: UIViewController {
         
         self.view.backgroundColor = .black
         
-        ShapeUtil.drawAxes(scene: scnScene, height: 50, radius: 0.2)
+        ShapeUtil.drawAxes(scene: scnScene, height: 50, radius: 0.4)
     }
     
     //
@@ -156,7 +156,9 @@ class SSViewController: UIViewController {
     //
     func createPlanet( parms : PlanetParm ) {
         
-        let planetGeom = SCNSphere(radius: CGFloat(parms.getScaledDiam())/2.0)
+        print("Name: ", parms.name," scaledDiam: ", parms.getScaledDiam())
+        
+        let planetGeom = SCNSphere(radius: CGFloat(parms.getScaledDiam())/1.0)
         
         let material = SCNMaterial()
         material.diffuse.contents = UIImage(named: "\(parms.name).jpg")
@@ -167,12 +169,19 @@ class SSViewController: UIViewController {
         // Use the image name as a label - fragile!
         planet.name = parms.name
         planet.position = SCNVector3(x: parms.getScaledOrbit(), y: 0, z: 0)
-         
+
+        print("scaledOrbit: ", parms.getScaledOrbit())
+
         ShapeUtil.rotateObject(obj: planet, rotation: Float.pi*2, duration: parms.getDayLenSec())
+
+        print("dayLenSec: ", parms.getDayLenSec())
 
         let orbit = createOrbit(orbitRadius: parms.getScaledOrbit())
         orbit.addChildNode(planet)
         ShapeUtil.rotateObject(obj: orbit, rotation: Float.pi*2, duration: parms.getYearLenSec())
+        
+        print("yearLenSec: ", parms.getYearLenSec())
+
         scnScene.rootNode.addChildNode(orbit)
      }
     
@@ -199,7 +208,7 @@ class SSViewController: UIViewController {
     //
     func setupPlanets () {
                                                     //  10e6 km          km                  days                 hours
-        planets.append( PlanetParm(name: "sun",     orbitRadius: 0.01,   diameter: 1.3927e6, yearLength: 1.0,     dayLength: 0 ))
+        planets.append( PlanetParm(name: "sun",     orbitRadius: 0.025,   diameter: 1.3927e6, yearLength: 3650.0,     dayLength: 27 ))
         planets.append( PlanetParm(name: "mercury", orbitRadius: 57.9,   diameter: 4879,     yearLength: 88.0,    dayLength: 4222.6 ))
         planets.append( PlanetParm(name: "venus",   orbitRadius: 108.2,  diameter: 12104,    yearLength: 224.7,   dayLength: 2802.0  ))
         planets.append( PlanetParm(name: "earth",   orbitRadius: 149.6,  diameter: 12756,    yearLength: 365.25,  dayLength: 24 ))
