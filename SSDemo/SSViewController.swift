@@ -21,7 +21,7 @@ struct PlanetParm {
     let diamScale   : Float       // from km to absolute units on screen
  
     // define the conversions needed
-    let maxNodeDiam  : Float = 1.0
+    let maxNodeDiam  : Float = 1.5
     let minNodeDiam  : Float = 0.2
     let maxDiam      : Float = 142984   // jupiter
     let minDiam      : Float = 4879     // mercury
@@ -157,9 +157,9 @@ class SSViewController: UIViewController {
     //
     func createPlanet( parms : PlanetParm ) {
         
-        print("Name: ", parms.name," scaledDiam: ", parms.getScaledDiam())
+        print("Name: ", parms.name," scaledDiam: ", parms.getScaledDiam(), " diamRatio: ", parms.diameter/1.34e6)
         
-        let planetGeom = SCNSphere(radius: CGFloat(parms.getScaledDiam())/1.0)
+        let planetGeom = SCNSphere(radius: CGFloat(parms.getScaledDiam()))
         
         let material = SCNMaterial()
         material.diffuse.contents = UIImage(named: "\(parms.name).jpg")
@@ -179,7 +179,7 @@ class SSViewController: UIViewController {
         planet.name = parms.name
         planet.position = SCNVector3(x: scaledOrbit, y: 0, z: 0)
 
-        print("scaledOrbit: ", scaledOrbit)
+        print("scaledOrbit: ", scaledOrbit, " ratioOrbit: ", parms.orbitRadius/5906.0)
 
         ShapeUtil.rotateObject(obj: planet, rotation: Float.pi*2, duration: parms.getDayLenSec())
 
