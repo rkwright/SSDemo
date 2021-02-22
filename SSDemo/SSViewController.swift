@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  SSViewController.swift
 //  SSDemo
 //
 //  Created by rkwright on 2/4/21.
@@ -21,26 +21,27 @@ struct PlanetParm {
     let diamScale   : Float       // from km to absolute units on screen
  
     // define the conversions needed
-    let maxNodeDiam  : Float = 2.5
-    let minNodeDiam  : Float = 0.1
-    let maxDiam      : Float = 3.14e06 //142984
-    let minDiam      : Float = 4879
+    let maxNodeDiam  : Float = 1.0
+    let minNodeDiam  : Float = 0.2
+    let maxDiam      : Float = 142984   // jupiter
+    let minDiam      : Float = 4879     // mercury
     
-    let maxOrbit     : Float = 90560.0
-    let minOrbit     : Float = 57.9
-    let maxNodeOrbit : Float = 20.0
-    let minNodeOrbit : Float = 0.3
+    let maxNodeOrbit : Float = 40.0
+    let minNodeOrbit : Float = 1.5
+    let maxOrbit     : Float = 90560.0  // pluto
+    let minOrbit     : Float = 57.9     // mercury
 
     init( name: String, orbitRadius: Double, diameter: Double, yearLength: Double, dayLength: Double) {
-        print("Init")
         self.name = name
         self.orbitRadius = Float(orbitRadius)
         self.diameter = Float(diameter)
         self.yearLength = Float(yearLength)
         self.dayLength = Float(dayLength)
         
-        diamScale = (maxNodeDiam - minNodeDiam) / (log(maxDiam) - log(minNodeDiam))
+        diamScale = (maxNodeDiam - minNodeDiam) / (log(maxDiam) - log(minDiam))
         orbitScale = (maxNodeOrbit - minNodeOrbit) / (log(maxOrbit) - log(minOrbit))
+        
+        print("orbitScale: ", orbitScale)
     }
     
     func getScaledOrbit() -> Float {
@@ -166,17 +167,25 @@ class SSViewController: UIViewController {
 
         let planet = SCNNode(geometry: planetGeom)
         
+        var scaledOrbit = parms.getScaledOrbit();
+        
+        if parms.name.caseInsensitiveCompare("sun") == ComparisonResult.orderedSame {
+            print("Sun!!")
+            scaledOrbit = 0.1
+            planetGeom.radius = 0.1
+        }
+        
         // Use the image name as a label - fragile!
         planet.name = parms.name
-        planet.position = SCNVector3(x: parms.getScaledOrbit(), y: 0, z: 0)
+        planet.position = SCNVector3(x: scaledOrbit, y: 0, z: 0)
 
-        print("scaledOrbit: ", parms.getScaledOrbit())
+        print("scaledOrbit: ", scaledOrbit)
 
         ShapeUtil.rotateObject(obj: planet, rotation: Float.pi*2, duration: parms.getDayLenSec())
 
         print("dayLenSec: ", parms.getDayLenSec())
 
-        let orbit = createOrbit(orbitRadius: parms.getScaledOrbit())
+        let orbit = createOrbit(orbitRadius: scaledOrbit)
         orbit.addChildNode(planet)
         ShapeUtil.rotateObject(obj: orbit, rotation: Float.pi*2, duration: parms.getYearLenSec())
         
