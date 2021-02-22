@@ -172,7 +172,7 @@ class SSViewController: UIViewController {
         if parms.name.caseInsensitiveCompare("sun") == ComparisonResult.orderedSame {
             print("Sun!!")
             scaledOrbit = 0.1
-            planetGeom.radius = 0.1
+            planetGeom.radius = 1.0
         }
         
         // Use the image name as a label - fragile!
