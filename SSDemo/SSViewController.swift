@@ -27,7 +27,7 @@ struct PlanetParm {
     let minDiam      : Float = 4879     // mercury
     
     let maxNodeOrbit : Float = 40.0
-    let minNodeOrbit : Float = 1.5
+    let minNodeOrbit : Float = 0.2
     let maxOrbit     : Float = 90560.0  // pluto
     let minOrbit     : Float = 57.9     // mercury
 
@@ -39,13 +39,13 @@ struct PlanetParm {
         self.dayLength = Float(dayLength)
         
         diamScale = (maxNodeDiam - minNodeDiam) / (log(maxDiam) - log(minDiam))
-        orbitScale = (maxNodeOrbit - minNodeOrbit) / (log(maxOrbit) - log(minOrbit))
+        orbitScale = (maxNodeOrbit - minNodeOrbit) / ((maxOrbit) - (minOrbit))
         
         print("orbitScale: ", orbitScale)
     }
     
     func getScaledOrbit() -> Float {
-        return minNodeOrbit + (log(self.orbitRadius) - log(minOrbit)) * orbitScale
+        return minNodeOrbit + ((self.orbitRadius) - (minOrbit)) * orbitScale
     }
     
     func getScaledDiam() -> Float {
@@ -157,8 +157,10 @@ class SSViewController: UIViewController {
     //
     func createPlanet( parms : PlanetParm ) {
         
+        let orbitRadius = (parms.orbitRadius/5906.4) * 40
         print("Name: ", parms.name," scaledDiam: ", parms.getScaledDiam(), " diamRatio: ", parms.diameter/1.34e6)
-        
+        print(" OrbitRatio: ", parms.orbitRadius/5906.4, " ScreenVal: ", orbitRadius)
+
         let planetGeom = SCNSphere(radius: CGFloat(parms.getScaledDiam()))
         
         let material = SCNMaterial()
@@ -172,24 +174,24 @@ class SSViewController: UIViewController {
         if parms.name.caseInsensitiveCompare("sun") == ComparisonResult.orderedSame {
             print("Sun!!")
             scaledOrbit = 0.1
-            planetGeom.radius = 1.0
+            planetGeom.radius = 0.5
         }
         
         // Use the image name as a label - fragile!
         planet.name = parms.name
-        planet.position = SCNVector3(x: scaledOrbit, y: 0, z: 0)
+        planet.position = SCNVector3(x: orbitRadius, y: 0, z: 0)
 
-        print("scaledOrbit: ", scaledOrbit, " ratioOrbit: ", parms.orbitRadius/5906.0)
+        //print("scaledOrbit: ", scaledOrbit, " ratioOrbit: ", parms.orbitRadius/5906.0)
 
         ShapeUtil.rotateObject(obj: planet, rotation: Float.pi*2, duration: parms.getDayLenSec())
 
-        print("dayLenSec: ", parms.getDayLenSec())
+        //print("dayLenSec: ", parms.getDayLenSec())
 
-        let orbit = createOrbit(orbitRadius: scaledOrbit)
+        let orbit = createOrbit(orbitRadius: (parms.orbitRadius/5906.4) * 40)
         orbit.addChildNode(planet)
         ShapeUtil.rotateObject(obj: orbit, rotation: Float.pi*2, duration: parms.getYearLenSec())
         
-        print("yearLenSec: ", parms.getYearLenSec())
+        //print("yearLenSec: ", parms.getYearLenSec())
 
         scnScene.rootNode.addChildNode(orbit)
      }

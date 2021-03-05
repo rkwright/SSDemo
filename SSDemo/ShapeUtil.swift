@@ -78,7 +78,7 @@ class ShapeUtil
     //
     static func rotateObject ( obj: SCNNode, rotation: Float, duration: Float ) {
         
-        print("Rotation: ", rotation, " dur: ", duration)
+        //print("Rotation: ", rotation, " dur: ", duration)
         
         let rotation = SCNAction.rotateBy(x:0,y:CGFloat(rotation),z:0, duration: TimeInterval(duration))
         obj.runAction(SCNAction.repeatForever(rotation))
